@@ -7,17 +7,18 @@ import os
 import random
 import shutil
 
-retail_list = ['Супермаркет', 'Магазин у дома', 'Магазин спиртных напитков', 'Кондитерский магазин', 'Магазин здоровой пищи','Бытовая химия', 'Магазин косметики', 'Магазин одежды', 'Газетный киоск']
-service_list = ['Парикмахерская', 'Салон красоты', 'Спа салон', 'Ремонт обуви', 'Ремонт ювелирных изделий', 'Автомойка', 'Фото на документы']
+retail_list = ['Супермаркет', 'Магазин у дома', 'Магазин спиртных напитков', 'Кондитерский магазин']
+shop_list = ['Бытовая химия', 'Магазин косметики', 'Магазин одежды', 'Газетный киоск', 'Автомойка']
+service_list = ['Парикмахерская', 'Салон красоты', 'Спа салон', 'Ремонт обуви', 'Ремонт ювелирных изделий', 'Фото на документы']
 catering_list = ['Ресторан', 'Кафе', 'Бар', 'Кофе на вынос', 'Киоск мороженного']
 culture_list = ['Ночной клуб']
-medical_list = ['Клиника', 'Стоматологическая клиника', 'Ветеринарная клиника', 'Женская консультация']
+medical_list = ['Клиника', 'Стоматологическая клиника', 'Ветеринарная клиника', 'Женская консультация', 'Магазин здоровой пищи']
 
 reatail_col = ['Количество_торговля_rank', 'Выручка_торговля_rank', 'Прибыль_торговля_rank', 'riteil_rank']
 service_col = ['Количество_бытовые_rank', 'Выручка_бытовые_rank', 'Прибыль_бытовые_rank', 'service_rank']
 catering_col = ['Количество_общепит_rank', 'Выручка_общепит_rank', 'Прибыль_общепит_rank', 'riteil_rank']
 culture_col = ['Количество_клубы_rank', 'Выручка_клубы_rank', 'Прибыль_клубы_rank', 'club_rank']
-medical_col = ['Количество_медицина_rank', 'Выручка_медицина_rank', 'Прибыль_медицина_rank', 'med_rank', 'vet_rank', 'stomat_rank']
+medical_col = ['Количество_медицина_rank', 'Выручка_медицина_rank', 'Прибыль_медицина_rank']
 
 weekdays = ['day_1_rank', 'day_2_rank', 'day_3_rank', 'day_4_rank', 'day_5_rank',]
 weekend = ['day_6_rank', 'day_7_rank']
@@ -25,7 +26,7 @@ weekend = ['day_6_rank', 'day_7_rank']
 work_time = ['hour_6_rank', 'hour_7_rank', 'hour_8_rank', 'hour_9_rank', 'hour_10_rank', 'hour_11_rank', 'hour_12_rank', 'hour_13_rank', 'hour_14_rank', 'hour_15_rank', 'hour_16_rank', 'hour_17_rank', 'hour_18_rank']
 rest_time = ['hour_19_rank', 'hour_20_rank', 'hour_21_rank', 'hour_22_rank', 'hour_23_rank','hour_0_rank', 'hour_1_rank', 'hour_2_rank', 'hour_3_rank', 'hour_4_rank', 'hour_5_rank', ]
 
-default_col = weekdays + work_time + ['crime_rank', 'money_rank', 'device_count_rank', 'device_nunique_rank', 'device_frec_rank', 'user_nunique_rank', 'duration_rank', 'duration_min_rank', 'duration_max_rank', 'toilet_rank', 'metro_rank']
+default_col = weekdays + work_time + ['money_rank', 'device_count_rank', 'device_nunique_rank', 'device_frec_rank', 'user_nunique_rank', 'duration_rank', 'duration_max_rank', 'toilet_rank', 'metro_rank']
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -64,17 +65,36 @@ def get_result(data, request):
         hour = request.args.get('hour')
         money = request.args.get('money')
         room = request.args.get('room')
-
         if branch in retail_list:
-            branch_cols = reatail_col
+            if branch == 'Магазин спиртных напитков':
+                branch_cols = reatail_col + ['crime_rank']    
+            else:
+                branch_cols = reatail_col
+
         elif branch in service_list:
-            branch_cols = service_col
+            if branch == 'Ремонт ювелирных изделий':
+                branch_cols = service_col + ['crime_rank']    
+            else:
+                branch_cols = service_col
+
         elif branch in catering_list:
-            branch_cols = catering_col
+            if (branch == 'Ресторан') or (branch == 'Бар'):
+                branch_cols = catering_col + ['crime_rank']    
+            else:
+                branch_cols = catering_col
+
         elif branch in culture_list:
-            branch_cols = culture_col
+            branch_cols = culture_col + ['crime_rank']
+
         elif branch in medical_list:
-            branch_cols = medical_col
+            if branch == 'Клиника':
+                branch_cols = medical_col + ['med_rank']
+            elif branch == 'Стоматологическая клиника':
+                branch_cols = medical_col + [ 'stomat_rank']
+            elif branch == 'Ветеринарная клиника':
+                branch_cols = medical_col + ['vet_rank']    
+            else:
+                branch_cols = medical_col 
 
         if day == 'будни':
             #day_col = weekdays по умолчанию

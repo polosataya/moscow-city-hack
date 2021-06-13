@@ -1,9 +1,11 @@
 #!flask/bin/python
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, make_response
 import pandas as pd
 import folium
 import os
+import random
+import shutil
 
 retail_list = ['Супермаркет', 'Магазин у дома', 'Магазин спиртных напитков', 'Кондитерский магазин', 'Магазин здоровой пищи','Бытовая химия', 'Магазин косметики', 'Магазин одежды', 'Газетный киоск']
 service_list = ['Парикмахерская', 'Салон красоты', 'Спа салон', 'Ремонт обуви', 'Ремонт ювелирных изделий', 'Автомойка', 'Фото на документы']
@@ -42,7 +44,6 @@ data = pd.read_csv(root + 'df_rank.csv')
 
 def get_result(data, request):
     #предсказание рангов по выбранным параметрам
-    
     if request.args.get('branch'):
 
         headers =  {
@@ -139,13 +140,27 @@ def index():
 
     folium_map.save(root + '/templates/map.html')
 
-    debug = 'lol'
-
     return render_template('index.html')
 
 @app.route('/map')
 def map():
-    return render_template('map.html')
+
+    r = int(random.triangular(0,100))
+    t = root+"templates/map_{i}.html"
+    for i in range(0,100):
+        f = t.format(i=i)
+        if os.path.exists(f):
+            os.remove(f)
+    f = t.format(i=r)
+    shutil.copy(root+"templates/map.html", f)
+
+    r = make_response(render_template(os.path.split(f)[1]))
+    r.cache_control.max_age = 0
+    r.cache_control.no_cache = True
+    r.cache_control.no_store = True
+    r.cache_control.must_revalidate = True
+    r.cache_control.proxy_revalidate = True
+    return r
 
 if __name__ == '__main__':
     app.run(debug=True)

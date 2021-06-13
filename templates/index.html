@@ -16,6 +16,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
     <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+      }
+
       .bd-placeholder-img {
         font-size: 1.125rem;
         text-anchor: middle;
@@ -39,11 +44,11 @@
   </head>
   <body>
 
-<main>
+<div class="container-fluid h-100">
+<div class="row h-100">
 
-  <div class="d-flex flex-column p-2 text-white bg-dark" style="width: 350px;">
-    <hr>
-    
+  <div class="p-2 text-white bg-dark" style="width: 350px;">
+
     <ul class="nav nav-pills flex-column mb-auto">
       <li>
         <a href="#" class="nav-link text-white">
@@ -183,12 +188,13 @@
   </div>
   </form>
 
-  <div id="map" class="map col">
+  <div id="map" class="map col h-100 p-0">
     <iframe src="/map" height="100%" width="100%"></iframe>
   </div>
 
+</div> <!--/row-->
+</div> <!--/container-->
 
-</main>
     <script src="static/bootstrap.bundle.min.js"></script>
     <script src="static/sidebars.js"></script>
   </body>
